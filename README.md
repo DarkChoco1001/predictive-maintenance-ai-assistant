@@ -24,17 +24,17 @@ flowchart LR
 3. **Diagnose:** the assistant matches the sensor pattern to failure modes in an **FMEA**, retrieves the matching troubleshooting procedures (RAG), and writes a diagnosis with evidence, actions and sources. It runs fully offline by default and can optionally use **Claude** or a **local Ollama model** for the write-up.
 4. **Act:** a draft work order is created with priority and due date set by fixed rules. A person approves it.
 
-## Model results (FD001 test set, 100 engines)
+## Model results (FD001, 100 engines)
 
 | Area | Method | Result |
 |---|---|---|
 | Reliability | Weibull fit on 100 run-to-failure lifetimes | **β = 4.4** (wear-out), **MTTF = 206 cycles**, **B10 life = 135 cycles** |
-| Early degradation detection | Isolation Forest trained on healthy data only | **100%** of engines flagged before failure, **median lead time 50 cycles** |
+| Early degradation detection | Isolation Forest trained on healthy data only, measured on held-out engines (5-fold GroupKFold across the 100 run-to-failure engines) | **100%** of held-out engines flagged before failure, **median lead time 49 cycles** (shortest 21). 5 engines alerted more than 125 cycles early, so these may be false or very early alarms |
 | Remaining Useful Life | Gradient Boosting regression on rolling time-series features | **RMSE 17.5 cycles**, MAE 12.7 |
 | Failure within 30 cycles | Gradient Boosting classification | **ROC-AUC 0.98**, precision 0.90, recall 0.76 |
 | Maintenance policy | Maintain when predicted RUL ≤ 30, vs run-to-failure | **~61% lower maintenance cost** (illustrative 10:1 cost ratio) |
 
-Validation uses **GroupKFold by engine**, so no engine appears in both training and validation. The full analysis is in [`ml/predictive_maintenance.ipynb`](ml/predictive_maintenance.ipynb) and the metrics in [`ml/reports/metrics.json`](ml/reports/metrics.json).
+Validation uses **GroupKFold by engine**, so no engine appears in both training and validation. RUL, classification and policy results use NASA's separate 100-engine test set. The full analysis is in [`ml/predictive_maintenance.ipynb`](ml/predictive_maintenance.ipynb) and the metrics in [`ml/reports/metrics.json`](ml/reports/metrics.json).
 
 | Reliability (Weibull) | Early warning (health index) |
 |---|---|

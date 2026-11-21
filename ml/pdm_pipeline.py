@@ -172,17 +172,35 @@ train_f["anomaly_score"] = -iso.score_samples(scaler.transform(train_f[hi_cols])
 healthy_scores = train_f.loc[train_f.cycle <= 30, "anomaly_score"]
 threshold = healthy_scores.quantile(0.99)
 
-def first_alert(d, persist=5):
-    above = (d["anomaly_score"] > threshold).astype(int)
+def first_alert(d, alert_threshold, persist=5):
+    above = (d["anomaly_score"] > alert_threshold).astype(int)
     run = above.groupby((above != above.shift()).cumsum()).cumsum()
     hit = d.loc[run >= persist]
     return hit["RUL"].iloc[0] if len(hit) else np.nan
 
-lead = train_f.groupby("unit")[["anomaly_score", "RUL"]].apply(first_alert)
+# Measure on held-out engines: each engine is scored by a detector (scaler, forest and
+# threshold) fitted only on the other engines, using 5-fold GroupKFold.
+held_out_lead = {}
+for fit_idx, held_idx in GroupKFold(n_splits=5).split(train_f, groups=train_f["unit"]):
+    fit_part, held = train_f.iloc[fit_idx], train_f.iloc[held_idx].copy()
+    fit_healthy = fit_part.loc[fit_part.cycle <= 30, hi_cols]
+    fold_scaler = StandardScaler().fit(fit_healthy)
+    fold_iso = IsolationForest(n_estimators=300, contamination=0.01, random_state=42)
+    fold_iso.fit(fold_scaler.transform(fit_healthy))
+    fold_threshold = np.quantile(-fold_iso.score_samples(fold_scaler.transform(fit_healthy)), 0.99)
+    held["anomaly_score"] = -fold_iso.score_samples(fold_scaler.transform(held[hi_cols]))
+    for unit, d in held.groupby("unit"):
+        held_out_lead[unit] = first_alert(d, fold_threshold)
+lead = pd.Series(held_out_lead)
+
 metrics["anomaly_detection"] = {
+    "validation": "5-fold GroupKFold, held-out engines",
     "engines_alerted_before_failure_pct": round(float(lead.notna().mean() * 100), 1),
     "median_lead_time_cycles": round(float(lead.median()), 1),
     "p10_lead_time_cycles": round(float(lead.quantile(0.1)), 1),
+    "min_lead_time_cycles": int(lead.min()),
+    "engines_alerted_under_30_cycles": int((lead < 30).sum()),
+    "engines_alerted_over_125_cycles_early": int((lead > 125).sum()),
 }
 print(json.dumps(metrics["anomaly_detection"], indent=2))
 
