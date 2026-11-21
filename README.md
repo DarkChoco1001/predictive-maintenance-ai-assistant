@@ -137,3 +137,7 @@ The FMEA and procedures were written for this demo from the C-MAPSS sensor docum
 ## Data citation
 
 A. Saxena and K. Goebel (2008). "Turbofan Engine Degradation Simulation Data Set", NASA Ames Prognostics Data Repository, NASA Ames Research Center, Moffett Field, CA.
+
+## License
+
+Code is released under the [MIT License](LICENSE). The C-MAPSS dataset is published by NASA; see the citation above.
