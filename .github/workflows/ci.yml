@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read            # least privilege for the workflow token (A01)
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: backend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip, cache-dependency-path: backend/requirements-dev.txt }
+      - run: pip install -r requirements-dev.txt
+      - name: Tests (including security-control tests)
+        run: pytest
+      - name: Static security analysis (Bandit)
+        run: bandit -q -r app
+      - name: Known-vulnerability scan (pip-audit, A06)
+        run: pip-audit -r requirements.txt
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: frontend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22", cache: npm, cache-dependency-path: frontend/package-lock.json }
+      - run: npm ci --ignore-scripts
+      - name: Type-check and build
+        run: npm run build
+      - name: Known-vulnerability scan (npm audit, A06)
+        run: npm audit --audit-level=high
+
+  codeql:
+    # Code scanning is free on public repos but needs a paid plan on private ones,
+    # so this job is skipped while the repo is private and runs once it is public.
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    permissions: { contents: read, actions: read, security-events: write }   # actions: read lets CodeQL read its own workflow run
+    strategy:
+      matrix: { language: [python, javascript-typescript] }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with: { languages: "${{ matrix.language }}" }
+      - uses: github/codeql-action/analyze@v3

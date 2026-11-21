@@ -1,0 +1,8 @@
+# ML training and analysis (pinned)
+numpy==2.2.6
+pandas==2.3.3
+scipy==1.15.3
+scikit-learn==1.7.2
+matplotlib==3.10.9
+jupyter==1.1.1
+jupytext==1.19.6

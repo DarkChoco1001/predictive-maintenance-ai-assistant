@@ -1,0 +1,52 @@
+{
+  "reliability": {
+    "engines": 100,
+    "MTTF_cycles": 206.3,
+    "min_life": 128,
+    "max_life": 362,
+    "weibull_beta_shape": 4.41,
+    "weibull_eta_scale": 225.0,
+    "B10_life_cycles": 135.1,
+    "MTTR_assumed_cycles": 5,
+    "inherent_availability": 0.9763
+  },
+  "anomaly_detection": {
+    "engines_alerted_before_failure_pct": 100.0,
+    "median_lead_time_cycles": 50.5,
+    "p10_lead_time_cycles": 27.0
+  },
+  "rul_regression": {
+    "cv_rmse": 16.48,
+    "test_rmse": 17.54,
+    "test_mae": 12.71,
+    "test_nasa_score": 733.0
+  },
+  "failure_classification": {
+    "cv_roc_auc": 0.989,
+    "test_roc_auc": 0.981,
+    "test_precision": 0.905,
+    "test_recall": 0.76,
+    "test_f1": 0.826
+  },
+  "maintenance_policy": {
+    "engines_at_risk": 25,
+    "caught": 17,
+    "missed": 8,
+    "early_alarms": 1,
+    "cost_run_to_failure": 250,
+    "cost_predictive": 98,
+    "cost_reduction_pct": 60.8
+  },
+  "top_features": {
+    "cycle": 0.095,
+    "s15_mean": 0.056,
+    "s4_mean": 0.027,
+    "s14_mean": 0.024,
+    "s9_mean": 0.023,
+    "s11_mean": 0.017,
+    "s2_mean": 0.017,
+    "s13_mean": 0.012,
+    "s3_mean": 0.008,
+    "s9": 0.007
+  }
+}

@@ -1,0 +1,28 @@
+# One-command demo:  docker compose up --build   then open http://localhost:8095
+services:
+  backend:
+    build: ./backend
+    environment:
+      APP_ENV: production
+      ALLOWED_HOSTS: backend,localhost,127.0.0.1
+      CORS_ORIGINS: http://localhost:${WEB_PORT:-8095}
+      TRUST_PROXY_HEADERS: "true"           # nginx sets X-Real-IP
+      LLM_PROVIDER: ${LLM_PROVIDER:-none}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OLLAMA_URL: ${OLLAMA_URL:-http://host.docker.internal:11434}
+    expose: ["8000"]                         # reachable only from the frontend proxy
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports: ["127.0.0.1:${WEB_PORT:-8095}:8080"]   # localhost only; change with WEB_PORT
+    depends_on: [backend]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
