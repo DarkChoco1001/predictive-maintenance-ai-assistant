@@ -1,0 +1,87 @@
+{
+  "_note": "Illustrative FMEA for a turbofan engine, built for a learning demo from C-MAPSS sensor documentation. Not OEM maintenance data.",
+  "modes": [
+    {
+      "id": "HPC-EFF",
+      "component": "High-Pressure Compressor (HPC)",
+      "name": "HPC efficiency loss (blade fouling / erosion)",
+      "effect": "Higher gas-path temperatures and fuel flow; reduced thrust and EGT margin.",
+      "causes": ["Airborne contaminant fouling", "Blade tip and leading-edge erosion"],
+      "signature": {"s3": 1, "s4": 1, "s11": 1, "s12": -1},
+      "severity": 7, "occurrence": 6, "detection": 3,
+      "actions": [
+        "Review the T30/T50 and Ps30 trends to confirm a gradual efficiency loss, not a step change",
+        "Perform an on-wing HPC compressor wash",
+        "Re-check the health index over the next 10 cycles; recovery confirms fouling",
+        "If no recovery, schedule an HPC borescope inspection for erosion"
+      ],
+      "parts": ["Compressor wash kit"],
+      "procedure": "TS-01"
+    },
+    {
+      "id": "HPC-FLOW",
+      "component": "High-Pressure Compressor (HPC)",
+      "name": "HPC flow capacity loss",
+      "effect": "Reduced surge margin with risk of compressor stall; loss of pressure ratio.",
+      "causes": ["Blade damage or excessive tip clearance", "Variable stator vane misrigging"],
+      "signature": {"s7": -1, "s11": 1, "s12": -1, "s9": 1},
+      "severity": 9, "occurrence": 4, "detection": 4,
+      "actions": [
+        "Restrict the engine to reduced-power operation until inspected",
+        "Perform an HPC borescope inspection (stages 1-9) for blade damage and tip rub",
+        "Check variable stator vane rigging and actuator",
+        "Plan HPC module removal if damage exceeds manual limits"
+      ],
+      "parts": ["HPC blade set (if damage confirmed)", "VSV actuator seal kit"],
+      "procedure": "TS-02"
+    },
+    {
+      "id": "HPT-WEAR",
+      "component": "High-Pressure Turbine (HPT)",
+      "name": "HPT blade thermal wear",
+      "effect": "Rising exhaust temperature and loss of turbine efficiency.",
+      "causes": ["Thermal barrier coating loss", "Cooling passage blockage"],
+      "signature": {"s4": 1, "s3": 1, "s9": 1},
+      "severity": 9, "occurrence": 3, "detection": 5,
+      "actions": [
+        "Trend EGT margin (T50) against core speed",
+        "Perform an HPT borescope inspection for coating loss and burn-through",
+        "Inspect cooling air bleed lines for restriction"
+      ],
+      "parts": ["HPT blade set (if damage confirmed)"],
+      "procedure": "TS-03"
+    },
+    {
+      "id": "FAN-DMG",
+      "component": "Fan",
+      "name": "Fan blade damage (foreign object)",
+      "effect": "Vibration and thrust loss; possible imbalance.",
+      "causes": ["Foreign object damage (FOD)", "Bird strike"],
+      "signature": {"s15": 1},
+      "severity": 8, "occurrence": 3, "detection": 5,
+      "actions": [
+        "Visually inspect fan blades for nicks, dents and leading-edge damage",
+        "Check fan vibration levels",
+        "Blend or replace damaged blades per manual limits"
+      ],
+      "parts": ["Fan blade (if replacement needed)"],
+      "procedure": "TS-04"
+    },
+    {
+      "id": "SENSOR",
+      "component": "Instrumentation",
+      "name": "Sensor drift or failure",
+      "effect": "False alarms or missed detection.",
+      "causes": ["Probe contamination", "Wiring or connector fault"],
+      "signature": {},
+      "severity": 5, "occurrence": 4, "detection": 6,
+      "actions": [
+        "Cross-check the deviating sensor against physically related sensors",
+        "Inspect the probe, wiring and connector",
+        "Replace or recalibrate the sensor, then confirm readings return to baseline"
+      ],
+      "parts": ["Replacement sensor probe"],
+      "procedure": "TS-05"
+    }
+  ]
+}

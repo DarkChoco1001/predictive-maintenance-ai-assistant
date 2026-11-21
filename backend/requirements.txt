@@ -1,0 +1,7 @@
+# Runtime dependencies (pinned). Update via Dependabot PRs; CI runs pip-audit.
+fastapi==0.162.5
+starlette==1.7.0
+pydantic==2.14.4
+uvicorn[standard]==0.54.0
+anthropic==2.11.0
+httpx==0.28.1
