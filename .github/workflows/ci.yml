@@ -39,7 +39,7 @@ jobs:
 
   codeql:
     runs-on: ubuntu-latest
-    permissions: { contents: read, security-events: write }
+    permissions: { contents: read, actions: read, security-events: write }   # actions: read lets CodeQL read its own workflow run
     strategy:
       matrix: { language: [python, javascript-typescript] }
     steps:
