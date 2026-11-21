@@ -1,0 +1,15 @@
+# Secrets
+.env
+*.env
+!.env.example
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ipynb_checkpoints/
+# Node
+node_modules/
+dist/
+# Raw dataset (download with the command in README)
+ml/data/

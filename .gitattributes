@@ -1,0 +1,5 @@
+# Keep Linux line endings in the repo and on checkout, so Docker builds and
+# shell scripts work the same on Windows, macOS and Linux.
+* text=auto eol=lf
+*.png binary
+*.ipynb text eol=lf
